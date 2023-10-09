@@ -5,20 +5,18 @@
   margin: 10%;
   border-radius: 5%;
   box-shadow: 0 2% 4% rgba(0, 0, 0, 0.1);
-  color:blueviolet;
+  color: blueviolet;
   font-size: x-large;
-
 }
 
 h1 {
   font-size: 200%;
-  color:blue;
+  color: blue;
   text-align: center;
 }
 
 .modal {
   margin: auto;
-  display: inline-block;
   box-sizing: border-box;
   background: #fff;
   padding: 15px;
@@ -58,10 +56,10 @@ h1 {
   background: rgba(0, 0, 0, 0.5);
 
   /* to show it above other content */
-  z-index: 999; 
+  z-index: 999;
 
   /* to allow scrolling if the screen is not high enough*/
-  overflow: auto; 
+  overflow: auto;
 
   /* this is used to center the modal */
   display: grid;
