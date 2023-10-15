@@ -65,3 +65,16 @@ h1 {
   display: grid;
   text-align: center;
 }
+
+#pokemon-list {
+  width: 80%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.pokemon-display-button {
+  width: 30%;
+}
