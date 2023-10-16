@@ -17,7 +17,7 @@ let pokemonRepository = (function () {
 
       // Attach a click event listener to each button
       button.addEventListener("click", () => {
-        pokemonRepository.showDetails(pokemon);
+        showDetails(pokemon); // Changed from "pokemonRepository.showDetails(pokemon)"
       });
 
       pokemonListContainer.appendChild(button);
@@ -26,44 +26,75 @@ let pokemonRepository = (function () {
 
   // Function to load the list of Pokémon from the API
   async function loadList() {
-    fetch(apiUrl)
-      .then((response) => response.json())
-      .then((data) => {
-        // Assuming the API response contains a results array with Pokémon data
-        const results = data.results;
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      // Assuming the API response contains a results array with Pokémon data
+      const results = data.results;
 
-        // Clear the existing list and populate it with the fetched Pokémon
-        pokemonList.length = 0; // Clear the existing list
+      // Clear the existing list and populate it with the fetched Pokémon
+      pokemonList.length = 0; // Clear the existing list
 
-        results.forEach((pokemonData, index) => {
-          const pokemon = {
-            name: pokemonData.name,
-            detailsUrl: pokemonData.url, // Store the details URL
-          };
+      results.forEach((pokemonData, index) => {
+        const pokemon = {
+          name: pokemonData.name,
+          detailsUrl: pokemonData.url, // Store the details URL
+        };
 
-          pokemonList.push(pokemon);
-        });
-        // Create and append buttons for the fetched Pokémon
-        createPokemonButtons();
-      })
-      .catch((error) => {
-        console.error("Error loading Pokémon list:", error);
+        pokemonList.push(pokemon);
       });
+      // Create and append buttons for the fetched Pokémon
+      createPokemonButtons();
+    } catch (error) {
+      console.error("Error loading Pokémon list:", error);
+    }
   }
 
-  function showDetails(pokemon) {
-    const modalTitle = document.querySelector(".modal-title");
-    const modalBody = document.querySelector(".modal-body");
-    const pokemonName = document.querySelector("#pokemon-name");
+  async function showDetails(pokemon) {
+    try {
+      const response = await fetch(pokemon.detailsUrl);
+      const data = await response.json();
+      console.log({ pokemon });
 
-    modalTitle.textContent = `Details for ${pokemon.name}`;
-    pokemonName.textContent = `Name: ${pokemon.name}`;
+      const modalTitle = document.querySelector(".modal-title");
+      const modalBody = document.querySelector(".modal-body");
 
-    // You can add more details here by updating the modalBody content
-    // Example: modalBody.textContent = `Height: ${pokemon.height} m`;
+      modalTitle.textContent = `Details for ${pokemon.name}`;
 
-    // Show the modal
-    $("#pokemon-modal").modal("show");
+      const container = document.createElement('div'); // Changed from 'h2'
+      container.textContent = `Name: ${pokemon.name}`;
+
+      // get abilities, moves
+      const abilitiesList = data.abilities.map(({ ability }) => ability.name).join(', ');
+      const movesList = data.moves.map(({ move }) => move.name).join(', ');
+
+      const image = document.createElement('img');
+      image.alt = pokemon.name;
+      image.src = data.sprites.front_shiny;
+
+      const abilitiesContent = document.createElement('p');
+      abilitiesContent.textContent = `Abilities: ${abilitiesList}`;
+      const movesContent = document.createElement('p');
+      movesContent.textContent = `Moves: ${movesList}`;
+      const weightContent = document.createElement('p');
+      weightContent.textContent = `Weight: ${data.weight}`;
+
+      container.appendChild(image); // Append elements to the container
+      container.appendChild(abilitiesContent);
+      container.appendChild(movesContent);
+      container.appendChild(weightContent);
+
+      modalBody.innerHTML = ''; // Clear modal body
+      modalBody.appendChild(container); // Replace modal body content
+
+      // You can add more details here by updating the modalBody content
+      // Example: modalBody.textContent = `Height: ${pokemon.height} m`;
+
+      // Show the modal
+      $('#pokemon-modal').modal('show');
+    } catch (error) {
+      console.error("Error loading Pokémon details:", error);
+    }
   }
 
   function getAll() {
@@ -79,3 +110,4 @@ let pokemonRepository = (function () {
 
 pokemonRepository.loadList();
 console.log(pokemonRepository.getAll());
+
